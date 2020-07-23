@@ -54,8 +54,9 @@ void display_time(int x, int y, int value) {
 
 int main() {
     // LCD init
+    u16 background_color = BLUE;
     Lcd_Init();
-    LCD_Clear(BLUE);
+    LCD_Clear(background_color);
 
     // Init gpio for BOOT0 button that responds on PA8 after boot.
     gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
@@ -71,7 +72,7 @@ int main() {
     int timer_diff = TIMER_DURATION;
 
     while(1) {
-        LCD_Clear(BLUE);
+        LCD_Clear(background_color);
 
         // If the timer is not triggered do a countdown
         if (!triggered) {
@@ -82,6 +83,17 @@ int main() {
                 timer_diff = TIMER_DURATION;
             }
         }
+        else {
+            if (background_color == BLUE) {
+                background_color = YELLOW;
+            }
+            else if (background_color == YELLOW) {
+                background_color = GREEN;
+            }
+            else if (background_color == GREEN) {
+                background_color = BLUE;
+            }
+        }
 
         // If the button is pressed restart the timer
         button = gpio_input_bit_get(GPIOA, GPIO_PIN_8);
@@ -89,6 +101,7 @@ int main() {
         if (button) {
             start = timer_start();
             triggered = 0;
+            background_color = BLUE;
         }
 
         // display time till alarm goes off
