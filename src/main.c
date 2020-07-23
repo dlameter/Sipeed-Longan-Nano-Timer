@@ -65,8 +65,14 @@ int main() {
     while(1) {
         LCD_Clear(BLUE);
 
-        display_int(8 * 16, 16, timer_diff_in_milliseconds(start));
-        display_time(8 * 12, 24, TIMER_DURATION - timer_diff_in_milliseconds(start));
+        int timer_diff = timer_diff_in_milliseconds(start);
+
+        display_int(8 * 16, 16, timer_diff);
+        display_time(8 * 12, 24, TIMER_DURATION - timer_diff);
+
+        if (TIMER_DURATION - timer_diff < 0) {
+            start = timer_start();
+        }
 
         // Draw characters on screen
         // position goes by pixel and text is 8px by 8px
