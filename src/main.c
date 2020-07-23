@@ -53,31 +53,47 @@ void display_time(int x, int y, int value) {
 }
 
 int main() {
-    // main entry file
-
     // LCD init
     Lcd_Init();
     LCD_Clear(BLUE);
 
+    // Init gpio for BOOT0 button that responds on PA8 after boot.
+    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
 
-    // Start timer
+    // State of BOOT0 button
+    uint16_t button;
+
+    // timer
     uint64_t start = timer_start();
+
+    // State of timer
+    uint16_t triggered = 1;
+    int timer_diff = TIMER_DURATION;
+
     while(1) {
         LCD_Clear(BLUE);
 
-        int timer_diff = timer_diff_in_milliseconds(start);
+        // If the timer is not triggered do a countdown
+        if (!triggered) {
+            timer_diff = timer_diff_in_milliseconds(start);
 
-        display_int(8 * 16, 16, timer_diff);
-        display_time(8 * 12, 24, TIMER_DURATION - timer_diff);
-
-        if (TIMER_DURATION - timer_diff < 0) {
-            start = timer_start();
+            if (TIMER_DURATION - timer_diff <= 0) {
+                triggered = 1;
+                timer_diff = TIMER_DURATION;
+            }
         }
 
-        // Draw characters on screen
-        // position goes by pixel and text is 8px by 8px
-        LCD_ShowChar8(0, 0, 'T', WHITE);
-        LCD_ShowChar8(8, 8, 'L', WHITE);
+        // If the button is pressed restart the timer
+        button = gpio_input_bit_get(GPIOA, GPIO_PIN_8);
+
+        if (button) {
+            start = timer_start();
+            triggered = 0;
+        }
+
+        // display time till alarm goes off
+        display_int(8 * 16, 16, timer_diff);
+        display_time(8 * 12, 24, TIMER_DURATION - timer_diff);
 
         delay_1ms(100);
     }
