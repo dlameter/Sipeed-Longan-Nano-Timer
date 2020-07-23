@@ -1,6 +1,8 @@
 #include "gd32vf103.h"
 #include "lcd/lcd.h"
 
+#define TIMER_DURATION 90000
+
 uint64_t timer_start() {
     uint64_t time, tmp;
 
@@ -64,12 +66,14 @@ int main() {
         LCD_Clear(BLUE);
 
         display_int(8 * 16, 16, timer_diff_in_milliseconds(start));
-        display_time(8 * 12, 24, timer_diff_in_milliseconds(start));
+        display_time(8 * 12, 24, TIMER_DURATION - timer_diff_in_milliseconds(start));
 
         // Draw characters on screen
         // position goes by pixel and text is 8px by 8px
         LCD_ShowChar8(0, 0, 'T', WHITE);
         LCD_ShowChar8(8, 8, 'L', WHITE);
+
+        delay_1ms(100);
     }
 
     return 0;
