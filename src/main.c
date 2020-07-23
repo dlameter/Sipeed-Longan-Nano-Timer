@@ -1,25 +1,9 @@
 #include "gd32vf103.h"
 #include "display.h"
+#include "timer.h"
 #include "lcd/lcd.h"
 
 #define TIMER_DURATION 90000
-
-uint64_t timer_start() {
-    uint64_t time, tmp;
-
-    tmp = get_timer_value();
-    do {
-        time = get_timer_value();
-    } while (time == tmp);
-
-    return time;
-}
-
-int timer_diff_in_milliseconds(uint64_t time) {
-    uint64_t delta_time = get_timer_value() - time;
-    
-    return (int) delta_time / 20000;
-}
 
 int main() {
     // LCD init
