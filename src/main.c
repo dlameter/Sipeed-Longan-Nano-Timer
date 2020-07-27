@@ -5,6 +5,31 @@
 
 #define TIMER_DURATION 90000
 
+// initializes the spi port used for the lcd
+void lcd_init() {
+    spi_parameter_struct spi_init_struct;
+
+    spi_init_struct.trans_mode = SPI_TRANSMODE_BDTRANSMIT;
+    spi_init_struct.device_mode = SPI_MASTER;
+    spi_init_struct.frame_size = SPI_FRAMESIZE_8BIT;
+    spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_2EDGE;
+    spi_init_struct.nss = SPI_NSS_SOFT;
+    spi_init_struct.prescale = SPI_PSC_8;
+    spi_init_struct.endian = SPI_ENDIAN_MSB;
+    
+    spi_init(SPI0, &spi_init_struct);
+}
+
+// draws a pixel on the lcd screen at point (x, y)
+lcd_draw_pixel(int x, int y) {
+
+}
+
+// deinitializes the spi port used for the lcd
+void lcd_deinit() {
+    spi_i2s_deinit(SPI0);
+}
+
 int main() {
     // LCD init
     u16 background_color = BLUE;
